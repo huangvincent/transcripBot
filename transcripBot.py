@@ -3,6 +3,7 @@ from urllib.request import Request, urlopen
 from google.cloud import speech_v1p1beta1
 from google.cloud.speech_v1p1beta1 import enums
 import io
+import time
 
 def authenticate():
     """ retrieves reddit class using credentials stored in praw.ini """
@@ -103,6 +104,9 @@ def main():
 
         # reply to mention
         submission.reply(transcription)
+
+        # wait a second so we dont spam reddit (rate limit of 1 post per sec)
+        time.sleep(1)
 
     # mark mentions as read
     reddit.inbox.mark_read(unread_messages)
