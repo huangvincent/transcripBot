@@ -51,32 +51,41 @@ def has_audio(url):
 
 
 def transcribe(audio_file):
-    """ transcribes .mp3 audio file to a text string using Google
+    """ transcribes audio file to a text string using Google
     speech-to-text following
     https://cloud.google.com/speech-to-text/docs/sync-recognize """
-
+    print("transcribing audio")
     client = speech_v1p1beta1.SpeechClient()
+    enable_word_time_offsets = True
 
     config = {
         "language_code": "en-US",
         "sample_rate_hertz": 44100,
         "encoding": enums.RecognitionConfig.AudioEncoding.MP3,
-        "model": "default"
+        "model": "default",
+        "enable_word_time_offsets": enable_word_time_offsets
     }
 
     audio = {"content": audio_file}
 
-    response = client.recognize(config, audio)
+    operation = client.long_running_recognize(config, audio)
+    response = operation.result()
 
-    transcription = []
+    transcription = "beep boop. I'm a bot."
+    print(response)
 
+    # Print the start and end time of each word
     for result in response.results:
         # First alternative is the most probable result
         alternative = result.alternatives[0]
-        transcription.append(str(alternative.transcript))
+        first_word = alternative.words[0]
 
-    return "\n".join(transcription)
+        transcription += "\r\r ({:02d}:{:02d})  \r".format(first_word.start_time.seconds // 60, first_word.start_time.seconds % 60)
+        transcription += str(alternative.transcript)
 
+    print("transcription successful")
+    transcription += "\r\r [End of Transcription]"
+    return transcription
 
 def main():
     # create reddit class
@@ -105,7 +114,7 @@ def main():
         # reply to mention
         mention.reply(transcription)
 
-        # wait a second so we dont spam reddit (rate limit of 1 post per sec)
+        # wait a second so we don't spam reddit 
         time.sleep(1)
 
     # mark mentions as read
