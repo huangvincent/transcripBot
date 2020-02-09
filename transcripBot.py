@@ -61,14 +61,17 @@ def transcribe(audio_file):
 
     audio = {"content": audio_file}
 
-    response = client.recognize(config, audio)
+    response = client.long_running_recognize(config, audio)
+
+    transcription = []
     for result in response.results:
         # First alternative is the most probable result
         alternative = result.alternatives[0]
-        print(u"Transcript: {}".format(alternative.transcript))
 
+        transcription.append(alternative.transcript)
+        transcription.append("\n")
 
-    return
+    return transcription
 
 def comment(reddit):
     return
@@ -97,9 +100,10 @@ def main():
         print("extracted audio file")
 
         # extract data
-        transcribe(audio_file)
+        transcription = transcribe(audio_file)
 
         # reply to mention
+        submission.reply(transcription)
 
 if __name__ == '__main__':
     main()
