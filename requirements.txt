@@ -1,0 +1,4 @@
+praw
+google.cloud
+google.cloud.speech
+google-cloud-storage

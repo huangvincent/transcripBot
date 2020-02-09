@@ -1,7 +1,7 @@
 import praw
 from urllib.request import Request, urlopen
-from google.cloud import speech_v1
-from google.cloud.speech_v1 import enums
+from google.cloud import speech_v1p1beta1
+from google.cloud.speech_v1p1beta1 import enums
 import io
 
 def authenticate():
@@ -51,26 +51,28 @@ def has_audio(url):
 
 def transcribe(audio_file):
     """ """
-    client = speech_v1.SpeechClient()
+    client = speech_v1p1beta1.SpeechClient()
 
     config = {
         "language_code": "en-US",
-        "sample_rate_hertz": 16000,
-        "encoding": enums.RecognitionConfig.AudioEncoding.LINEAR16,
+        "sample_rate_hertz": 44100,
+        "encoding": enums.RecognitionConfig.AudioEncoding.MP3,
+        "model": "default"
     }
 
+
+    # with io.open("audio_file.wav", "rb") as f:
+    #     content = f.read()
     audio = {"content": audio_file}
 
-    print("Transcribing...")
-    operation = client.long_running_recognize(config, audio)
-    response = operation.result()
-    print("done.")
+    response = client.recognize(config, audio)
+    # response = operation.result()
 
     transcription = []
+
     for result in response.results:
         # First alternative is the most probable result
         alternative = result.alternatives[0]
-
         transcription.append(str(alternative.transcript))
 
     return "\n".join(transcription)
@@ -94,16 +96,15 @@ def main():
         # get audio file as an url
         audio_url = get_audio_url(reddit, submission)
         audio_file = has_audio(audio_url)
-        # print("url={}".format(audio_url))
 
         # confirm there is audio
         if audio_file == None:
             continue
-        print("extracted audio file")
+        # print("extracted audio file")
 
         # extract data
         transcription = transcribe(audio_file)
-
+        # print("transcription: " + str(transcription))
         # reply to mention
         submission.reply(transcription)
 
