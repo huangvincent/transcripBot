@@ -109,7 +109,7 @@ def main():
         time.sleep(1)
 
     # mark mentions as read
-    reddit.inbox.mark_read(unread_messages)
+    reddit.inbox.mark_read(mentions)
 
 if __name__ == '__main__':
     main()
