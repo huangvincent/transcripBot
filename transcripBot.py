@@ -50,7 +50,10 @@ def has_audio(url):
 
 
 def transcribe(audio_file):
-    """ """
+    """ transcribes .mp3 audio file to a text string using Google
+    speech-to-text following
+    https://cloud.google.com/speech-to-text/docs/sync-recognize """
+
     client = speech_v1p1beta1.SpeechClient()
 
     config = {
@@ -60,13 +63,9 @@ def transcribe(audio_file):
         "model": "default"
     }
 
-
-    # with io.open("audio_file.wav", "rb") as f:
-    #     content = f.read()
     audio = {"content": audio_file}
 
     response = client.recognize(config, audio)
-    # response = operation.result()
 
     transcription = []
 
@@ -77,8 +76,6 @@ def transcribe(audio_file):
 
     return "\n".join(transcription)
 
-def comment(reddit):
-    return
 
 def main():
     # create reddit class
@@ -100,13 +97,15 @@ def main():
         # confirm there is audio
         if audio_file == None:
             continue
-        # print("extracted audio file")
 
         # extract data
         transcription = transcribe(audio_file)
-        # print("transcription: " + str(transcription))
+
         # reply to mention
         submission.reply(transcription)
+
+    # mark mentions as read
+    reddit.inbox.mark_read(unread_messages)
 
 if __name__ == '__main__':
     main()
