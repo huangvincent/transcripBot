@@ -91,34 +91,38 @@ def main():
     # create reddit class
     reddit = authenticate()
 
-    # check inbox for mentions
-    mentions = get_mentions(reddit)
+    while(True):
+        # check inbox for mentions
+        mentions = get_mentions(reddit)
 
-    # parse each mention's post
-    for mention in mentions:
-        # get submission the mention/comment is in
-        submission = mention.submission
-        print("submission title: {}".format(submission.title))
+        # parse each mention's post
+        for mention in mentions:
+            # get submission the mention/comment is in
+            submission = mention.submission
+            print("submission title: {}".format(submission.title))
 
-        # get audio file as an url
-        audio_url = get_audio_url(reddit, submission)
-        audio_file = has_audio(audio_url)
+            # get audio file as an url
+            audio_url = get_audio_url(reddit, submission)
+            audio_file = has_audio(audio_url)
 
-        # confirm there is audio
-        if audio_file == None:
-            continue
+            # confirm there is audio
+            if audio_file == None:
+                continue
 
-        # extract data
-        transcription = transcribe(audio_file)
+            # extract data
+            transcription = transcribe(audio_file)
 
-        # reply to mention
-        mention.reply(transcription)
+            # reply to mention
+            mention.reply(transcription)
 
-        # wait a second so we don't spam reddit 
-        time.sleep(1)
+            # wait a second so we don't spam reddit
+            time.sleep(1)
 
-    # mark mentions as read
-    reddit.inbox.mark_read(mentions)
+        # mark mentions as read
+        reddit.inbox.mark_read(mentions)
+
+        # wait 5 seconds before checking for new mentions
+        time.sleep(5)
 
 if __name__ == '__main__':
     main()
