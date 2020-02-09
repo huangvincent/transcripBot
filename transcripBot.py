@@ -65,8 +65,8 @@ def transcribe(audio_file):
     operation = client.long_running_recognize(config, audio)
     response = operation.result()
     print("done.")
-    transcription = []
 
+    transcription = []
     for result in response.results:
         # First alternative is the most probable result
         alternative = result.alternatives[0]
