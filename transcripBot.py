@@ -69,9 +69,8 @@ def transcribe(audio_file):
         alternative = result.alternatives[0]
 
         transcription.append(alternative.transcript)
-        transcription.append("\n")
 
-    return transcription
+    return "\n".join(transcription)
 
 def comment(reddit):
     return
