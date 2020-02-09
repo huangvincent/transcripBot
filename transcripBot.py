@@ -50,7 +50,10 @@ def has_audio(url):
 
 
 def transcribe(audio_file):
+<<<<<<< HEAD
     """ """
+=======
+>>>>>>> d4f83fba09bc989eae1288629d336d4e11ac9c7e
     client = speech_v1.SpeechClient()
 
     config = {
@@ -99,7 +102,10 @@ def main():
         # extract data
         transcribe(audio_file)
 
+<<<<<<< HEAD
         # reply to mention
 
+=======
+>>>>>>> d4f83fba09bc989eae1288629d336d4e11ac9c7e
 if __name__ == '__main__':
     main()
