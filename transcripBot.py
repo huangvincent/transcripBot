@@ -103,7 +103,7 @@ def main():
         transcription = transcribe(audio_file)
 
         # reply to mention
-        submission.reply(transcription)
+        mention.reply(transcription)
 
         # wait a second so we dont spam reddit (rate limit of 1 post per sec)
         time.sleep(1)
